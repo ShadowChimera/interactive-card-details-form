@@ -1,0 +1,38 @@
+@use './vars/colors' as *;
+@use './vars/typography' as *;
+
+:root {
+  /* -------------------------------------------------------------------------- */
+  /*                                   Colors                                   */
+  /* -------------------------------------------------------------------------- */
+
+  --gradient-primary: linear-gradient(
+    0deg,
+    #{$clr-gradient-1},
+    #{$clr-gradient-2}
+  );
+
+  --clr-danger: #{$clr-red};
+
+  --clr-bg-light-primary: #{$clr-white};
+  --clr-bg-dark-primary: #{$clr-vary-dark-violet};
+  --clr-bg-danger: var(--clr-danger);
+
+  --clr-text-dark-primary: #{$clr-vary-dark-violet};
+  --clr-text-dark-secondary: #{$clr-dark-grayish-violet};
+  --clr-text-light-primary: #{$clr-white};
+  --clr-text-placeholder: #{$clr-light-grayish-violet};
+  --clr-text-danger: var(--clr-danger);
+
+  --clr-border-primary: #{$clr-light-grayish-violet};
+  --clr-border-danger: var(--clr-danger);
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 Typography                                 */
+  /* -------------------------------------------------------------------------- */
+
+  --ff-primary: #{$ff-space-grotesk};
+  --fs-primary: 1.125rem;
+  --fs-heading-1: 3rem; // ! not in design
+  --lh-primary: 1.2;
+}

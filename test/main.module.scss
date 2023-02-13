@@ -1,0 +1,21 @@
+.container {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+
+  min-height: 100vh;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.watermark {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 1000;
+
+  font-size: var(--fs-heading-1);
+  font-weight: 700;
+  color: var(--clr-text-primary);
+  opacity: 0.5;
+}

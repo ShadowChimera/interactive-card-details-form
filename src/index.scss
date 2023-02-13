@@ -1,0 +1,11 @@
+@use './utils/sass/vars' as *;
+@use './utils/sass/reset' as *;
+
+body {
+  font-family: var(--ff-primary);
+  font-size: var(--fs-primary);
+  line-height: var(--lh-primary);
+  color: var(--clr-text-dark-primary);
+
+  background-color: var(--clr-bg-light-primary);
+}
