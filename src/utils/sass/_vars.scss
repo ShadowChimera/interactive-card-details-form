@@ -7,10 +7,13 @@
   /* -------------------------------------------------------------------------- */
 
   --gradient-primary: linear-gradient(
-    0deg,
+    to right,
     #{$clr-gradient-1},
     #{$clr-gradient-2}
   );
+  --gradient-primary-direction: to right;
+  --gradient-primary-stop-color-1: #{$clr-gradient-1};
+  --gradient-primary-stop-color-2: #{$clr-gradient-2};
 
   --clr-danger: #{$clr-red};
 
@@ -21,7 +24,10 @@
   --clr-text-dark-primary: #{$clr-vary-dark-violet};
   --clr-text-dark-secondary: #{$clr-dark-grayish-violet};
   --clr-text-light-primary: #{$clr-white};
-  --clr-text-placeholder: #{$clr-light-grayish-violet};
+  --clr-text-placeholder: #{rgba(
+      $clr-dark-grayish-violet,
+      0.6
+    )};
   --clr-text-danger: var(--clr-danger);
 
   --clr-border-primary: #{$clr-light-grayish-violet};
@@ -35,4 +41,10 @@
   --fs-primary: 1.125rem;
   --fs-heading-1: 3rem; // ! not in design
   --lh-primary: 1.2;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                    Other                                   */
+  /* -------------------------------------------------------------------------- */
+
+  --border-radius-primary: 0.5rem;
 }
