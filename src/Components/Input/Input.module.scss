@@ -1,0 +1,69 @@
+.input {
+  --border-width: 1px;
+  --border-radius: var(--border-radius-primary);
+  --border-transition-duration: 0.2s;
+  --border-transition-function: ease-out;
+
+  position: relative;
+  border: var(--border-width) solid transparent;
+  border-radius: var(--border-radius);
+
+  transition: border
+    var(
+      --border-transition-duration,
+      --border-transition-function
+    );
+
+  // * gradient border on focus
+  &:focus-within {
+    &::before {
+      background-position: 0% 50%;
+    }
+  }
+
+  // * border substitute
+  &::before {
+    content: '';
+
+    position: absolute;
+    left: calc(-1 * var(--border-width));
+    right: calc(-1 * var(--border-width));
+    top: calc(-1 * var(--border-width));
+    bottom: calc(-1 * var(--border-width));
+    z-index: -1;
+
+    border-radius: var(--border-radius);
+    background: linear-gradient(
+      var(--gradient-primary-direction),
+      var(--gradient-primary-stop-color-1),
+      var(--gradient-primary-stop-color-2) 50%,
+      var(--clr-border-primary) 50%,
+      var(--clr-border-primary)
+    );
+    background-size: 200% 100%;
+    background-position: 100% 50%;
+
+    transition: background-position
+      var(
+        --border-transition-duration,
+        --border-transition-function
+      );
+  }
+
+  input {
+    padding: 0.5em 1em;
+
+    border: none;
+    border-radius: calc(
+      var(--border-radius) - var(--border-width)
+    );
+
+    color: var(--clr-text-dark-primary);
+
+    outline: none;
+
+    &::placeholder {
+      color: var(--clr-text-placeholder);
+    }
+  }
+}
