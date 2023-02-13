@@ -1,24 +1,29 @@
-import style from './Input.modules.scss'
+import style from './Input.module.scss'
 
 function Input({
   type = 'text',
   id,
   name,
-  className,
-  style: inlineStyle,
+  placeholder = '',
   value = '',
   onChange,
+  className = '',
+  style: inlineStyle = {},
 }) {
   return (
-    <input
-      style={inlineStyle}
+    <div
       className={`${className} ${style.input}`}
-      type={type}
-      id={id}
-      name={name}
-      value={value}
-      onChange={onChange}
-    />
+      style={inlineStyle}
+    >
+      <input
+        type={type}
+        id={id}
+        name={name}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
+    </div>
   )
 }
 
