@@ -1,0 +1,29 @@
+.button {
+  padding: 1em;
+
+  background: linear-gradient(
+    var(--gradient-primary-direction),
+    var(--gradient-primary-stop-color-1),
+    var(--gradient-primary-stop-color-2),
+    var(--clr-bg-dark-primary) 50%
+  );
+  background-size: 200% 100%;
+  background-position: 100%;
+
+  border: none;
+  border-radius: var(--border-radius-primary);
+
+  color: var(--clr-text-light-primary);
+
+  transition: background-position 0.2s ease-out;
+
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    background-position: 0%;
+  }
+  &:active {
+    background-position: 20%;
+  }
+}
