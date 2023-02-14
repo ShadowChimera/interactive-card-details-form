@@ -1,0 +1,18 @@
+.formControl {
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5em;
+
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75em;
+  font-weight: 700;
+}
+
+.inputsWrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4em, 1fr));
+  gap: var(--inputs-gap);
+}
