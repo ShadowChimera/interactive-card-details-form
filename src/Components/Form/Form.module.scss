@@ -1,0 +1,22 @@
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem 1.25rem;
+
+  max-width: 24rem;
+  margin: 1rem;
+}
+
+.formControl {
+  --inputs-gap: 0.5rem;
+
+  grid-column: 1 / -1;
+}
+
+.formControlColumn {
+  grid-column: auto;
+}
+
+.button {
+  grid-column: 1 / -1;
+}
