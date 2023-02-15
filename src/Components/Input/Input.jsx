@@ -6,6 +6,7 @@ function Input({
   name,
   placeholder = '',
   value = '',
+  required = false,
   onChange,
   className = '',
   style: inlineStyle = {},
@@ -22,6 +23,7 @@ function Input({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        required={required}
       />
     </div>
   )
