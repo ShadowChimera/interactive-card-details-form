@@ -1,4 +1,4 @@
-import { forwardRef, useState } from 'react'
+import { forwardRef } from 'react'
 
 import style from './FormControl.module.scss'
 const STATUS_STYLE = {
@@ -57,36 +57,18 @@ export default FormControl
 function getFormControlContent(inputsConfig) {
   const inputsProps = getInputsProps(inputsConfig)
 
+  console.log('inputsProps', inputsProps)
+
   if (inputsProps.length === 1) {
     const props = inputsProps[0]
 
-    return (
-      <Input
-        key={props.get('id')}
-        type={props.get('type')}
-        id={props.get('id')}
-        name={props.get('name')}
-        placeholder={props.get('placeholder')}
-        value={props.get('value')}
-        onChange={props.get('onChange')}
-        required={props.get('required')}
-      />
-    )
+    return <Input {...props} />
   }
 
   return (
     <div className={style.inputsWrapper}>
       {inputsProps.map((inputProps) => (
-        <Input
-          key={inputProps.get('id')}
-          type={inputProps.get('type')}
-          id={inputProps.get('id')}
-          name={inputProps.get('name')}
-          placeholder={inputProps.get('placeholder')}
-          value={inputProps.get('value')}
-          onChange={inputProps.get('onChange')}
-          required={inputProps.get('required')}
-        />
+        <Input key={inputProps.id} {...inputProps} />
       ))}
     </div>
   )
@@ -94,21 +76,19 @@ function getFormControlContent(inputsConfig) {
 
 function getInputsProps(inputsConfig) {
   if (!(inputsConfig instanceof Object)) {
-    throw new TypeError(
-      'inputsConfig must be an Object or Map'
-    )
-  }
-
-  if (!(inputsConfig instanceof Map)) {
-    inputsConfig = new Map(Object.entries(inputsConfig))
+    throw new TypeError('inputsConfig must be an Object')
   }
 
   let inputsProps = null
-  let defaultProps = new Map([['id', crypto.randomUUID()]])
+  let defaultProps = {
+    id: crypto.randomUUID(),
+  }
 
-  for (let [propName, propValue] of inputsConfig) {
+  for (let [propName, propValue] of Object.entries(
+    inputsConfig
+  )) {
     if (!Array.isArray(propValue)) {
-      defaultProps.set(propName, propValue)
+      defaultProps[propName] = propValue
       continue
     }
 
@@ -116,7 +96,7 @@ function getInputsProps(inputsConfig) {
       inputsProps = new Array(propValue.length)
 
       for (let i = 0; i < inputsProps.length; i++) {
-        inputsProps[i] = new Map()
+        inputsProps[i] = {}
       }
     } else if (inputsProps.length !== propValue.length) {
       throw new Error(
@@ -125,7 +105,7 @@ function getInputsProps(inputsConfig) {
     }
 
     for (let i = 0; i < inputsProps.length; i++) {
-      inputsProps[i].set(propName, propValue[i])
+      inputsProps[i][propName] = propValue[i]
     }
   }
 
@@ -134,10 +114,10 @@ function getInputsProps(inputsConfig) {
   }
 
   for (let i = 0; i < inputsProps.length; i++) {
-    inputsProps[i] = new Map([
+    inputsProps[i] = {
       ...defaultProps,
       ...inputsProps[i],
-    ])
+    }
   }
 
   return inputsProps
