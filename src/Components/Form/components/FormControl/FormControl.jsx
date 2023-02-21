@@ -9,29 +9,17 @@ import Input from '../../../Input/Input'
 
 const FormControl = forwardRef(function FormControl(
   {
-    type = 'text',
-    id,
-    name,
-    placeholder,
-    value,
-    onChange,
     label,
-    required = false,
     infoMessage,
     style: inlineStyle = {},
     className = '',
+    ...inputProps
   },
   ref
 ) {
   const formControlContent = getFormControlContent({
+    ...inputProps,
     ref,
-    type,
-    id,
-    name,
-    placeholder,
-    value,
-    onChange,
-    required,
   })
 
   return (
