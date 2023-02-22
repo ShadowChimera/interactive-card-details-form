@@ -9,13 +9,24 @@ import formReducer from './formReducer'
 
 function Form({ style: inlineStyle, className = '' }) {
   const [state, dispatch] = useReducer(formReducer, {
-    isDisabled: false, // TODO make form status
+    // isDisabled: false, // TODO make form status
+    status: 'default',
     data: {
-      cardholderName: '',
-      cardNumber: '',
-      cardExpDateMonth: '',
-      cardExpDateYear: '',
-      cardCvc: '',
+      cardholderName: {
+        value: '',
+      },
+      cardNumber: {
+        value: '',
+      },
+      cardExpDate: {
+        value: {
+          month: '',
+          year: '',
+        },
+      },
+      cardCvc: {
+        value: '',
+      },
     },
   })
 
@@ -23,6 +34,13 @@ function Form({ style: inlineStyle, className = '' }) {
 
   function handleSubmit(e) {
     e.preventDefault()
+
+    if (
+      state.status === 'validating' ||
+      state.status === 'sending'
+    ) {
+      return
+    }
 
     dispatch({
       type: 'submitted_form',
@@ -66,7 +84,13 @@ function Form({ style: inlineStyle, className = '' }) {
         name="cardholderName"
         id="cardholderNameInput"
         placeholder="e.g. Jane Appleseed"
-        value={state.data.cardholderName}
+        value={state.data.cardholderName.value}
+        status={
+          state.data.cardholderName.validation?.status
+        }
+        infoMessage={
+          state.data.cardholderName.validation?.message
+        }
         onChange={handleCardholderNameChange}
       />
 
@@ -76,7 +100,11 @@ function Form({ style: inlineStyle, className = '' }) {
         name="cardNumber"
         id="cardNumberInput"
         placeholder="e.g. 1234 5678 9123 0000"
-        value={state.data.cardNumber}
+        value={state.data.cardNumber.value}
+        status={state.data.cardNumber.validation?.status}
+        infoMessage={
+          state.data.cardNumber.validation?.message
+        }
         dispatch={dispatch}
       />
 
@@ -91,13 +119,17 @@ function Form({ style: inlineStyle, className = '' }) {
           ]}
           placeholder={['MM', 'YY']}
           value={[
-            state.data.cardExpDateMonth,
-            state.data.cardExpDateYear,
+            state.data.cardExpDate.value.month,
+            state.data.cardExpDate.value.year,
           ]}
           onChange={[
             handleExpDateMonthChange,
             handleExpDateYearChange,
           ]}
+          status={state.data.cardExpDate.validation?.status}
+          infoMessage={
+            state.data.cardExpDate.validation?.message
+          }
         />
         <FormControl
           className={`${style.formControl} ${style.formControlColumn}`}
@@ -105,7 +137,11 @@ function Form({ style: inlineStyle, className = '' }) {
           name="cardCvc"
           id="cardCvcInput"
           placeholder="e.g. 123"
-          value={state.data.cardCvc}
+          value={state.data.cardCvc.value}
+          status={state.data.cardCvc.validation?.status}
+          infoMessage={
+            state.data.cardCvc.validation?.message
+          }
           onChange={handleCvcChange}
         />
       </>
