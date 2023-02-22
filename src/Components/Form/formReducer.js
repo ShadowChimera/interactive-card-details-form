@@ -25,19 +25,17 @@ function formReducer(state, action) {
       )
     }
     case 'changed_exp_date_month': {
-      return changeStateNumericData(
+      return changeStateDataCardExpDate(
         action.value,
         state,
-        'cardExpDateMonth',
-        2
+        'month'
       )
     }
     case 'changed_exp_date_year': {
-      return changeStateNumericData(
+      return changeStateDataCardExpDate(
         action.value,
         state,
-        'cardExpDateYear',
-        2
+        'year'
       )
     }
     case 'changed_cvc': {
@@ -65,7 +63,10 @@ function changeStateData(value, state, field) {
     ...state,
     data: {
       ...state.data,
-      [field]: value,
+      [field]: {
+        ...state.data[field],
+        value: value,
+      },
     },
   }
 }
@@ -81,4 +82,24 @@ function changeStateNumericData(
   }
 
   return changeStateData(value, state, field)
+}
+
+function changeStateDataCardExpDate(value, state, field) {
+  let newState = changeStateNumericData(
+    value,
+    state,
+    'cardExpDate',
+    2
+  )
+
+  if (newState === state) {
+    return state
+  }
+
+  newState.data.cardExpDate.value = {
+    ...state.data.cardExpDate.value,
+    [field]: value,
+  }
+
+  return newState
 }
