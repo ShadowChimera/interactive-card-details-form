@@ -9,7 +9,7 @@ import formReducer from './formReducer'
 
 function Form({ style: inlineStyle, className = '' }) {
   const [state, dispatch] = useReducer(formReducer, {
-    isDisabled: false,
+    isDisabled: false, // TODO make form status
     data: {
       cardholderName: '',
       cardNumber: '',
@@ -19,11 +19,38 @@ function Form({ style: inlineStyle, className = '' }) {
     },
   })
 
+  // const inputRefs = useRef(new Map())
+
   function handleSubmit(e) {
     e.preventDefault()
 
     dispatch({
       type: 'submitted_form',
+    })
+  }
+
+  function handleCardholderNameChange(e) {
+    dispatch({
+      type: 'changed_cardholder_name',
+      value: e.target.value,
+    })
+  }
+  function handleExpDateMonthChange(e) {
+    dispatch({
+      type: 'changed_exp_date_month',
+      value: e.target.value,
+    })
+  }
+  function handleExpDateYearChange(e) {
+    dispatch({
+      type: 'changed_exp_date_year',
+      value: e.target.value,
+    })
+  }
+  function handleCvcChange(e) {
+    dispatch({
+      type: 'changed_cvc',
+      value: e.target.value,
     })
   }
 
@@ -40,6 +67,7 @@ function Form({ style: inlineStyle, className = '' }) {
         id="cardholderNameInput"
         placeholder="e.g. Jane Appleseed"
         value={state.data.cardholderName}
+        onChange={handleCardholderNameChange}
       />
 
       <CardNumberControl
@@ -66,6 +94,10 @@ function Form({ style: inlineStyle, className = '' }) {
             state.data.cardExpDateMonth,
             state.data.cardExpDateYear,
           ]}
+          onChange={[
+            handleExpDateMonthChange,
+            handleExpDateYearChange,
+          ]}
         />
         <FormControl
           className={`${style.formControl} ${style.formControlColumn}`}
@@ -74,6 +106,7 @@ function Form({ style: inlineStyle, className = '' }) {
           id="cardCvcInput"
           placeholder="e.g. 123"
           value={state.data.cardCvc}
+          onChange={handleCvcChange}
         />
       </>
 

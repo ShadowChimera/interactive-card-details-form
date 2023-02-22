@@ -45,8 +45,6 @@ export default FormControl
 function getFormControlContent(inputsConfig) {
   const inputsProps = getInputsProps(inputsConfig)
 
-  console.log('inputsProps', inputsProps)
-
   if (inputsProps.length === 1) {
     const props = inputsProps[0]
 
