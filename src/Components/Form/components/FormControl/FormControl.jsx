@@ -10,6 +10,7 @@ import Input from '../../../Input/Input'
 const FormControl = forwardRef(function FormControl(
   {
     label,
+    status,
     infoMessage,
     style: inlineStyle = {},
     className = '',
@@ -25,17 +26,13 @@ const FormControl = forwardRef(function FormControl(
   return (
     <div
       style={inlineStyle}
-      className={`${className} ${style.formControl} ${
-        STATUS_STYLE[infoMessage?.status]
-      }`}
+      className={`${className} ${style.formControl} ${STATUS_STYLE[status]}`}
     >
       <label htmlFor={null} className={style.label}>
         {label}
       </label>
       {formControlContent}
-      <div className={style.infoMessage}>
-        {infoMessage?.message}
-      </div>
+      <div className={style.infoMessage}>{infoMessage}</div>
     </div>
   )
 })
