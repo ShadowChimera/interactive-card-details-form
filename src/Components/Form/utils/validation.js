@@ -6,22 +6,30 @@ export const cardNumberValidationSettings = {
   groupsSeparator: ' ',
 }
 
-export function validateCardholderName(value) {
+export function validateCardholderName(
+  value,
+  getStatus = false
+) {
   if (!value.length) {
     return {
       isValid: false,
       message: BLANK_MESSAGE,
+      status: getStatus ? 'error' : undefined,
     }
   }
 
   return { isValid: true }
 }
 
-export function validateCardNumber(value) {
+export function validateCardNumber(
+  value,
+  getStatus = false
+) {
   if (!value.length) {
     return {
       isValid: false,
       message: BLANK_MESSAGE,
+      status: getStatus ? 'error' : undefined,
     }
   }
 
@@ -43,27 +51,60 @@ export function validateCardNumber(value) {
       message: `Wrong format, must contain ${
         settings.groupsCount * settings.numbersInGroupCount
       } numbers`,
+      status: getStatus ? 'error' : undefined,
     }
   }
 
   return { isValid: true }
 }
 
-export function validateCardExpDate({ month, year }) {
+export function validateCardExpDate(
+  { month, year },
+  getStatus = false
+) {
+  let validationResult = {
+    isValid: true,
+    status: getStatus
+      ? {
+          month: '',
+          year: '',
+        }
+      : undefined,
+  }
+
   if (!month.length || !year.length) {
-    return {
-      isValid: false,
-      message: BLANK_MESSAGE,
+    validationResult.isValid = false
+    validationResult.message = BLANK_MESSAGE
+
+    if (!month.length && validationResult.status) {
+      validationResult.status.month = 'error'
     }
+
+    if (!year.length && validationResult.status) {
+      validationResult.status.year = 'error'
+    }
+
+    return validationResult
   }
 
   const expDateReg = /^\d{1,2}$/
 
   if (!expDateReg.test(month) || !expDateReg.test(year)) {
-    return {
-      isValid: false,
-      message: `Wrong format, only 2-digit numbers`,
+    validationResult.isValid = false
+    validationResult.message = `Wrong format, only 2-digit numbers`
+
+    if (
+      !expDateReg.test(month) &&
+      validationResult.status
+    ) {
+      validationResult.status.month = 'error'
     }
+
+    if (!expDateReg.test(year) && validationResult.status) {
+      validationResult.status.year = 'error'
+    }
+
+    return validationResult
   }
 
   month = parseInt(month)
@@ -73,6 +114,9 @@ export function validateCardExpDate({ month, year }) {
     return {
       isValid: false,
       message: `Wrong format, the month number can be from 1 to 12`,
+      status: getStatus
+        ? { month: 'error', year: '' }
+        : undefined,
     }
   }
 
@@ -82,17 +126,21 @@ export function validateCardExpDate({ month, year }) {
     return {
       isValid: false,
       message: `Card has expired, enter the relevant date`,
+      status: getStatus
+        ? { month: 'error', year: 'error' }
+        : undefined,
     }
   }
 
   return { isValid: true }
 }
 
-export function validateCardCvc(value) {
+export function validateCardCvc(value, getStatus = false) {
   if (!value.length) {
     return {
       isValid: false,
       message: BLANK_MESSAGE,
+      status: getStatus ? 'error' : undefined,
     }
   }
 
@@ -102,6 +150,7 @@ export function validateCardCvc(value) {
     return {
       isValid: false,
       message: `Wrong format, only 3-digit number`,
+      status: getStatus ? 'error' : undefined,
     }
   }
 
