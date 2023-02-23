@@ -72,6 +72,37 @@ function Form({ style: inlineStyle, className = '' }) {
     })
   }
 
+  function handleCardholderNameBlur(e) {
+    dispatch({
+      type: 'removed_focus_from_cardholder_name',
+      value: e.target.value,
+    })
+  }
+  function handleCardNumberBlur(e) {
+    dispatch({
+      type: 'removed_focus_from_card_number',
+      value: e.target.value,
+    })
+  }
+  function handleExpDateMonthBlur(e) {
+    dispatch({
+      type: 'removed_focus_from_exp_date_month',
+      value: e.target.value,
+    })
+  }
+  function handleExpDateYearBlur(e) {
+    dispatch({
+      type: 'removed_focus_from_exp_date_year',
+      value: e.target.value,
+    })
+  }
+  function handleCvcBlur(e) {
+    dispatch({
+      type: 'removed_focus_from_cvc',
+      value: e.target.value,
+    })
+  }
+
   return (
     <form
       style={inlineStyle}
@@ -92,6 +123,7 @@ function Form({ style: inlineStyle, className = '' }) {
           state.data.cardholderName.validation?.message
         }
         onChange={handleCardholderNameChange}
+        onBlur={handleCardholderNameBlur}
       />
 
       <CardNumberControl
@@ -106,6 +138,7 @@ function Form({ style: inlineStyle, className = '' }) {
           state.data.cardNumber.validation?.message
         }
         dispatch={dispatch}
+        onBlur={handleCardNumberBlur}
       />
 
       <>
@@ -126,6 +159,10 @@ function Form({ style: inlineStyle, className = '' }) {
             handleExpDateMonthChange,
             handleExpDateYearChange,
           ]}
+          onBlur={[
+            handleExpDateMonthBlur,
+            handleExpDateYearBlur,
+          ]}
           status={state.data.cardExpDate.validation?.status}
           infoMessage={
             state.data.cardExpDate.validation?.message
@@ -143,6 +180,7 @@ function Form({ style: inlineStyle, className = '' }) {
             state.data.cardCvc.validation?.message
           }
           onChange={handleCvcChange}
+          onBlur={handleCvcBlur}
         />
       </>
 
