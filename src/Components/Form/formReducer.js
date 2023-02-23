@@ -1,14 +1,16 @@
+import validation from './utils/validation'
+
 function formReducer(state, action) {
   switch (action.type) {
     case 'submitted_form': {
-      if (state.isDisabled) {
-        return state
+      if (
+        state.status === 'validating' ||
+        state.status === 'sending'
+      ) {
+        return
       }
 
-      return {
-        ...state,
-        isDisabled: true,
-      }
+      return validate(state) // TODO status change
     }
     case 'changed_card_number': {
       return changeStateData(
@@ -45,6 +47,22 @@ function formReducer(state, action) {
         'cardCvc',
         3
       )
+    }
+
+    case 'removed_focus_from_card_number': {
+      return validate(state, 'cardNumber')
+    }
+    case 'removed_focus_from_cardholder_name': {
+      return validate(state, 'cardholderName')
+    }
+    case 'removed_focus_from_exp_date_month': {
+      return validate(state, 'cardExpDate')
+    }
+    case 'removed_focus_from_exp_date_year': {
+      return validate(state, 'cardExpDate')
+    }
+    case 'removed_focus_from_cvc': {
+      return validate(state, 'cardCvc')
     }
     default: {
       throw Error('Unknown action: ' + action.type)
@@ -99,6 +117,79 @@ function changeStateDataCardExpDate(value, state, field) {
   newState.data.cardExpDate.value = {
     ...state.data.cardExpDate.value,
     [field]: value,
+  }
+
+  return newState
+}
+
+function validate(state, fieldToValidate) {
+  const validationMethods = new Map(
+    Object.entries({
+      cardholderName: validation.validateCardholderName,
+      cardNumber: validation.validateCardNumber,
+      cardExpDate: validation.validateCardExpDate,
+      cardCvc: validation.validateCardCvc,
+    })
+  )
+
+  let validationResults
+
+  if (fieldToValidate) {
+    validationResults = new Map([
+      [
+        fieldToValidate,
+        validationMethods.get(fieldToValidate)(
+          state.data[fieldToValidate].value
+        ),
+      ],
+    ])
+
+    if (
+      validationResults.get(fieldToValidate).message ===
+      state.data[fieldToValidate].validation?.message
+    ) {
+      return state
+    }
+  } else {
+    validationResults = new Map(
+      Array.from(validationMethods, (entry) => entry).map(
+        ([fieldName, method]) => {
+          return [
+            fieldName,
+            method(state.data[fieldName].value),
+          ]
+        }
+      )
+    )
+  }
+
+  let newState = {
+    ...state,
+    data: {
+      ...state.data,
+    },
+  }
+
+  for (let [
+    fieldName,
+    validationResult,
+  ] of validationResults) {
+    if (validationResult.isValid) {
+      newState.data[fieldName] = {
+        ...newState.data[fieldName],
+        validation: null,
+      }
+
+      continue
+    }
+
+    newState.data[fieldName] = {
+      ...newState.data[fieldName],
+      validation: {
+        status: 'error',
+        message: validationResult.message,
+      },
+    }
   }
 
   return newState
