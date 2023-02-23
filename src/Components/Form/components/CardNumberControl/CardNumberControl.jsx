@@ -10,8 +10,7 @@ function CardNumberControl({
   placeholder = 'e.g. 1234 5678 9123 0000',
   value,
   dispatch,
-  className = '',
-  style: inlineStyle = {},
+  ...formControlProps
 }) {
   const inputRef = useRef(null)
   const inputSelectRangeRef = useRef(null)
@@ -50,8 +49,6 @@ function CardNumberControl({
   return (
     <FormControl
       ref={inputRef}
-      style={inlineStyle}
-      className={className}
       label={label}
       name={name}
       id={id}
@@ -59,6 +56,7 @@ function CardNumberControl({
       value={value}
       onChange={handleInputChange}
       onSelect={handleSelectText}
+      {...formControlProps}
     />
   )
 }
