@@ -139,14 +139,17 @@ function validate(state, fieldToValidate) {
       [
         fieldToValidate,
         validationMethods.get(fieldToValidate)(
-          state.data[fieldToValidate].value
+          state.data[fieldToValidate].value,
+          true
         ),
       ],
     ])
 
     if (
+      validationResults.get(fieldToValidate).status ===
+        state.data[fieldToValidate].validation?.status &&
       validationResults.get(fieldToValidate).message ===
-      state.data[fieldToValidate].validation?.message
+        state.data[fieldToValidate].validation?.message
     ) {
       return state
     }
@@ -156,7 +159,7 @@ function validate(state, fieldToValidate) {
         ([fieldName, method]) => {
           return [
             fieldName,
-            method(state.data[fieldName].value),
+            method(state.data[fieldName].value, true),
           ]
         }
       )
@@ -186,7 +189,7 @@ function validate(state, fieldToValidate) {
     newState.data[fieldName] = {
       ...newState.data[fieldName],
       validation: {
-        status: 'error',
+        status: validationResult.status,
         message: validationResult.message,
       },
     }

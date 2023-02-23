@@ -163,7 +163,10 @@ function Form({ style: inlineStyle, className = '' }) {
             handleExpDateMonthBlur,
             handleExpDateYearBlur,
           ]}
-          status={state.data.cardExpDate.validation?.status}
+          status={[
+            state.data.cardExpDate.validation?.status.month,
+            state.data.cardExpDate.validation?.status.year,
+          ]}
           infoMessage={
             state.data.cardExpDate.validation?.message
           }
