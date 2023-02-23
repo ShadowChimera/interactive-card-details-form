@@ -1,9 +1,6 @@
 import { forwardRef } from 'react'
 
 import style from './FormControl.module.scss'
-const STATUS_STYLE = {
-  error: style.danger,
-}
 
 import Input from '../../../Input/Input'
 
@@ -18,17 +15,24 @@ const FormControl = forwardRef(function FormControl(
   },
   ref
 ) {
+  let [statusStyle, generalStatusStyle] =
+    getStatusStyle(status)
+
   const formControlContent = getFormControlContent({
     ...inputProps,
+    className: statusStyle,
     ref,
   })
 
   return (
     <div
       style={inlineStyle}
-      className={`${className} ${style.formControl} ${STATUS_STYLE[status]}`}
+      className={`${className} ${style.formControl} ${generalStatusStyle}`}
     >
-      <label htmlFor={null} className={style.label}>
+      <label
+        htmlFor={null /* TODO htmlFor  */}
+        className={style.label}
+      >
         {label}
       </label>
       {formControlContent}
@@ -45,7 +49,12 @@ function getFormControlContent(inputsConfig) {
   if (inputsProps.length === 1) {
     const props = inputsProps[0]
 
-    return <Input className={style.input} {...props} />
+    return (
+      <Input
+        {...props}
+        className={`${style.input} ${props.className}`}
+      />
+    )
   }
 
   return (
@@ -53,8 +62,8 @@ function getFormControlContent(inputsConfig) {
       {inputsProps.map((inputProps) => (
         <Input
           key={inputProps.id}
-          className={style.input}
           {...inputProps}
+          className={`${style.input} ${inputProps.className}`}
         />
       ))}
     </div>
@@ -108,4 +117,26 @@ function getInputsProps(inputsConfig) {
   }
 
   return inputsProps
+}
+
+function getStatusStyle(status) {
+  const STATUS_STYLE = {
+    error: style.danger,
+  }
+
+  let statusStyle, generalStatusStyle
+
+  if (Array.isArray(status)) {
+    statusStyle = status.map(
+      (status) => STATUS_STYLE[status]
+    )
+    generalStatusStyle = statusStyle.find(
+      (status) => status
+    )
+  } else {
+    statusStyle = STATUS_STYLE[status]
+    generalStatusStyle = statusStyle
+  }
+
+  return [statusStyle, generalStatusStyle]
 }

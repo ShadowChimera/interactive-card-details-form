@@ -3,12 +3,16 @@
     .infoMessage {
       color: var(--clr-danger, red);
     }
-    .input {
-      border-color: var(--clr-danger, red);
+  }
+}
 
-      &:focus-within {
-        border-color: transparent;
-      }
+.formControl.danger .input,
+.input {
+  &.danger {
+    border-color: var(--clr-danger, red);
+
+    &:focus-within {
+      border-color: transparent;
     }
   }
 }
@@ -26,6 +30,10 @@
 .infoMessage {
   margin-top: 0.75em;
   font-size: 0.75em;
+
+  &.danger {
+    color: var(--clr-danger, red);
+  }
 }
 
 .inputsWrapper {
