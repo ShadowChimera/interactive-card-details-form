@@ -45,13 +45,17 @@ function getFormControlContent(inputsConfig) {
   if (inputsProps.length === 1) {
     const props = inputsProps[0]
 
-    return <Input {...props} />
+    return <Input className={style.input} {...props} />
   }
 
   return (
     <div className={style.inputsWrapper}>
       {inputsProps.map((inputProps) => (
-        <Input key={inputProps.id} {...inputProps} />
+        <Input
+          key={inputProps.id}
+          className={style.input}
+          {...inputProps}
+        />
       ))}
     </div>
   )

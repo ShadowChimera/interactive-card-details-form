@@ -1,4 +1,16 @@
 .formControl {
+  &.danger {
+    .infoMessage {
+      color: var(--clr-danger, red);
+    }
+    .input {
+      border-color: var(--clr-danger, red);
+
+      &:focus-within {
+        border-color: transparent;
+      }
+    }
+  }
 }
 
 .label {
@@ -9,6 +21,11 @@
   letter-spacing: 0.15em;
   font-size: 0.75em;
   font-weight: 700;
+}
+
+.infoMessage {
+  margin-top: 0.75em;
+  font-size: 0.75em;
 }
 
 .inputsWrapper {
