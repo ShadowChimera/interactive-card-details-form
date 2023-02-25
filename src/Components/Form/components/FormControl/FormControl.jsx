@@ -4,139 +4,163 @@ import style from './FormControl.module.scss'
 
 import Input from '../../../Input/Input'
 
-const FormControl = forwardRef(function FormControl(
+export const FormControl = forwardRef(function FormControl(
   {
     label,
     status,
-    infoMessage,
+    message,
+    inputs = [],
     style: inlineStyle = {},
     className = '',
-    ...inputProps
+    ...inlineInputConfig
   },
   ref
 ) {
-  let [statusStyle, generalStatusStyle] =
-    getStatusStyle(status)
+  /* ------------------------------ CONFIGURATION ----------------------------- */
 
-  const formControlContent = getFormControlContent({
-    ...inputProps,
-    className: statusStyle,
-    ref,
-  })
+  const config = {
+    label,
+    status,
+    message,
+    inputs,
+  }
+
+  if (!config.inputs.length) {
+    config.inputs = [
+      {
+        ...inlineInputConfig,
+        ref,
+      },
+    ]
+  }
+
+  /* --------------------------- CONTENT GENERATION --------------------------- */
+
+  let statusStyle = getStatusStyle(config.status)
+
+  const content = getContent(config)
+
+  /* --------------------------------- MARKUP --------------------------------- */
 
   return (
     <div
       style={inlineStyle}
-      className={`${className} ${style.formControl} ${generalStatusStyle}`}
+      className={`${className} ${style.formControl} ${statusStyle}`}
     >
-      <label
-        htmlFor={null /* TODO htmlFor  */}
-        className={style.label}
-      >
-        {label}
-      </label>
-      {formControlContent}
-      <div className={style.infoMessage}>{infoMessage}</div>
+      {content}
     </div>
   )
 })
 
 export default FormControl
 
-function getFormControlContent(inputsConfig) {
-  const inputsProps = getInputsProps(inputsConfig)
+/* -------------------------------------------------------------------------- */
+/*                             CONTENT GENERATION                             */
+/* -------------------------------------------------------------------------- */
 
-  if (inputsProps.length === 1) {
-    const props = inputsProps[0]
+function getContent(config) {
+  const { label, message, inputs } = config
+  let content = {
+    inputs: getInputs(inputs),
+  }
 
-    return (
-      <Input
-        {...props}
-        className={`${style.input} ${props.className}`}
-      />
+  if (typeof label !== 'undefined') {
+    content.label = (
+      <label
+        htmlFor={inputs[0]?.id}
+        className={style.label}
+      >
+        {label}
+      </label>
+    )
+  }
+
+  if (typeof message !== 'undefined') {
+    content.message = (
+      <div className={style.infoMessage}>{message}</div>
     )
   }
 
   return (
-    <div className={style.inputsWrapper}>
-      {inputsProps.map((inputProps) => (
-        <Input
-          key={inputProps.id}
-          {...inputProps}
-          className={`${style.input} ${inputProps.className}`}
-        />
-      ))}
-    </div>
+    <>
+      {content.label}
+      {content.inputs}
+      {content.message}
+    </>
   )
 }
 
-function getInputsProps(inputsConfig) {
-  if (!(inputsConfig instanceof Object)) {
-    throw new TypeError('inputsConfig must be an Object')
-  }
+function getInputs(inputs) {
+  let content = []
 
-  let inputsProps = null
-  let defaultProps = {
-    id: crypto.randomUUID(),
-  }
+  for (let config of inputs) {
+    const { label, status, message, ...inputConfig } =
+      config
 
-  for (let [propName, propValue] of Object.entries(
-    inputsConfig
-  )) {
-    if (!Array.isArray(propValue)) {
-      defaultProps[propName] = propValue
-      continue
+    inputConfig.id = inputConfig.id ?? crypto.randomUUID()
+
+    let partialsContent = {
+      input: (
+        <Input
+          {...inputConfig}
+          className={`${style.input} ${inputConfig.className}`}
+        />
+      ),
     }
 
-    if (inputsProps === null) {
-      inputsProps = new Array(propValue.length)
-
-      for (let i = 0; i < inputsProps.length; i++) {
-        inputsProps[i] = {}
-      }
-    } else if (inputsProps.length !== propValue.length) {
-      throw new Error(
-        `Inputs' properties must be the same length`
+    if (typeof label !== 'undefined') {
+      partialsContent.label = (
+        <label
+          htmlFor={inputConfig.id}
+          className={style.label}
+        >
+          {label}
+        </label>
       )
     }
 
-    for (let i = 0; i < inputsProps.length; i++) {
-      inputsProps[i][propName] = propValue[i]
+    if (typeof message !== 'undefined') {
+      partialsContent.message = (
+        <div className={style.infoMessage}>{message}</div>
+      )
     }
+
+    content.push(
+      <div
+        key={inputConfig.id ?? crypto.randomUUID()}
+        className={`${
+          style.inputContainer
+        } ${getStatusStyle(status)}`}
+      >
+        {partialsContent.label}
+        {partialsContent.input}
+        {partialsContent.message}
+      </div>
+    )
   }
 
-  if (inputsProps === null) {
-    return [defaultProps]
+  if (content.length > 1) {
+    content = (
+      <div className={style.inputsWrapper}>{content}</div>
+    )
   }
 
-  for (let i = 0; i < inputsProps.length; i++) {
-    inputsProps[i] = {
-      ...defaultProps,
-      ...inputsProps[i],
-    }
-  }
+  return content
+}
 
-  return inputsProps
+/* -------------------------------------------------------------------------- */
+/*                                   STYLING                                  */
+/* -------------------------------------------------------------------------- */
+
+const STATUS_STYLES = {
+  error: style.danger,
+  default: style.default,
 }
 
 function getStatusStyle(status) {
-  const STATUS_STYLE = {
-    error: style.danger,
+  if (typeof status !== 'undefined') {
+    status = status || 'default'
   }
 
-  let statusStyle, generalStatusStyle
-
-  if (Array.isArray(status)) {
-    statusStyle = status.map(
-      (status) => STATUS_STYLE[status]
-    )
-    generalStatusStyle = statusStyle.find(
-      (status) => status
-    )
-  } else {
-    statusStyle = STATUS_STYLE[status]
-    generalStatusStyle = statusStyle
-  }
-
-  return [statusStyle, generalStatusStyle]
+  return STATUS_STYLES[status]
 }
