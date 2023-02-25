@@ -112,20 +112,23 @@ function Form({ style: inlineStyle, className = '' }) {
       <FormControl
         className={style.formControl}
         label="Cardholder Name"
-        name="cardholderName"
-        id="cardholderNameInput"
-        placeholder="e.g. Jane Appleseed"
-        value={state.data.cardholderName.value}
         status={
           state.data.cardholderName.validation?.status
         }
-        infoMessage={
+        message={
           state.data.cardholderName.validation?.message
         }
-        onChange={handleCardholderNameChange}
-        onBlur={handleCardholderNameBlur}
+        inputs={[
+          {
+            name: 'cardholderName',
+            id: 'cardholderNameInput',
+            placeholder: 'e.g. Jane Appleseed',
+            value: state.data.cardholderName.value,
+            onChange: handleCardholderNameChange,
+            onBlur: handleCardholderNameBlur,
+          },
+        ]}
       />
-
       <CardNumberControl
         className={style.formControl}
         label="Card Number"
@@ -134,59 +137,64 @@ function Form({ style: inlineStyle, className = '' }) {
         placeholder="e.g. 1234 5678 9123 0000"
         value={state.data.cardNumber.value}
         status={state.data.cardNumber.validation?.status}
-        infoMessage={
-          state.data.cardNumber.validation?.message
-        }
+        message={state.data.cardNumber.validation?.message}
         dispatch={dispatch}
         onBlur={handleCardNumberBlur}
       />
-
       <>
         <FormControl
           className={`${style.formControl} ${style.formControlColumn}`}
           label="Exp. Date (MM/YY)"
-          name={['cardExpDateMonth', 'cardExpDateYear']}
-          id={[
-            'cardExpDateMonthInput',
-            'cardExpDateYearInput',
-          ]}
-          placeholder={['MM', 'YY']}
-          value={[
-            state.data.cardExpDate.value.month,
-            state.data.cardExpDate.value.year,
-          ]}
-          onChange={[
-            handleExpDateMonthChange,
-            handleExpDateYearChange,
-          ]}
-          onBlur={[
-            handleExpDateMonthBlur,
-            handleExpDateYearBlur,
-          ]}
-          status={[
-            state.data.cardExpDate.validation?.status.month,
-            state.data.cardExpDate.validation?.status.year,
-          ]}
-          infoMessage={
+          message={
             state.data.cardExpDate.validation?.message
           }
+          status={
+            state.data.cardExpDate.validation?.status
+              .month ||
+            state.data.cardExpDate.validation?.status.year
+          }
+          inputs={[
+            {
+              name: 'cardExpDateMonth',
+              id: 'cardExpDateMonthInput',
+              placeholder: 'MM',
+              value: state.data.cardExpDate.value.month,
+              status:
+                state.data.cardExpDate.validation?.status
+                  .month,
+              onChange: handleExpDateMonthChange,
+              onBlur: handleExpDateMonthBlur,
+            },
+            {
+              name: 'cardExpDateYear',
+              id: 'cardExpDateYearInput',
+              placeholder: 'YY',
+              value: state.data.cardExpDate.value.year,
+              status:
+                state.data.cardExpDate.validation?.status
+                  .year,
+              onChange: handleExpDateYearChange,
+              onBlur: handleExpDateYearBlur,
+            },
+          ]}
         />
         <FormControl
           className={`${style.formControl} ${style.formControlColumn}`}
           label="CVC"
-          name="cardCvc"
-          id="cardCvcInput"
-          placeholder="e.g. 123"
-          value={state.data.cardCvc.value}
           status={state.data.cardCvc.validation?.status}
-          infoMessage={
-            state.data.cardCvc.validation?.message
-          }
-          onChange={handleCvcChange}
-          onBlur={handleCvcBlur}
+          message={state.data.cardCvc.validation?.message}
+          inputs={[
+            {
+              name: 'cardCvc',
+              id: 'cardCvcInput',
+              placeholder: 'e.g. 123',
+              value: state.data.cardCvc.value,
+              onChange: handleCvcChange,
+              onBlur: handleCvcBlur,
+            },
+          ]}
         />
       </>
-
       <Button
         type="submit"
         className={style.button}
