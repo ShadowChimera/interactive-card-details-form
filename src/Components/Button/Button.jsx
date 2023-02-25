@@ -6,6 +6,7 @@ function Button({
   onClick,
   style: inlineStyle = {},
   className = '',
+  ...props
 }) {
   return type ? (
     <input
@@ -14,12 +15,14 @@ function Button({
       type={type}
       value={text}
       onClick={onClick}
+      {...props}
     />
   ) : (
     <button
       style={inlineStyle}
       className={`${className} ${style.button}`}
       onClick={onClick}
+      {...props}
     >
       {text}
     </button>
