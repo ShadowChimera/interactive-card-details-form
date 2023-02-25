@@ -3,6 +3,8 @@ import style from './CardNumberControl.module.scss'
 
 import FormControl from '../FormControl/FormControl'
 
+import { cardNumberFormatConfig } from '../../utils/validation'
+
 function CardNumberControl({
   label = 'Card Number',
   name = 'cardNumber',
@@ -63,9 +65,15 @@ function CardNumberControl({
 
 export default CardNumberControl
 
-const GROUPS_SEPARATOR = ' '
-const GROUPS_COUNT = 4
-const NUMBERS_IN_GROUP_COUNT = 4
+/* -------------------------------------------------------------------------- */
+/*                                 VALIDATION                                 */
+/* -------------------------------------------------------------------------- */
+
+const GROUPS_SEPARATOR =
+  cardNumberFormatConfig.groupsSeparator
+const GROUPS_COUNT = cardNumberFormatConfig.groupsCount
+const NUMBERS_IN_GROUP_COUNT =
+  cardNumberFormatConfig.numbersInGroupCount
 
 function getValidatedCardValue(
   curValue,
