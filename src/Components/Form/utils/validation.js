@@ -1,6 +1,6 @@
 const BLANK_MESSAGE = "Can't be blank"
 
-export const cardNumberValidationSettings = {
+export const cardNumberFormatConfig = {
   groupsCount: 4,
   numbersInGroupCount: 4,
   groupsSeparator: ' ',
@@ -33,7 +33,7 @@ export function validateCardNumber(
     }
   }
 
-  const settings = cardNumberValidationSettings
+  const settings = cardNumberFormatConfig
 
   const CARD_NUMBER_PATTERN = `^(\\d{${
     settings.numbersInGroupCount
