@@ -8,7 +8,7 @@ export const cardNumberFormatConfig = {
 
 export function validateCardholderName(
   value,
-  getStatus = false
+  getStatus = true
 ) {
   if (!value.length) {
     return {
@@ -23,7 +23,7 @@ export function validateCardholderName(
 
 export function validateCardNumber(
   value,
-  getStatus = false
+  getStatus = true
 ) {
   if (!value.length) {
     return {
@@ -60,7 +60,7 @@ export function validateCardNumber(
 
 export function validateCardExpDate(
   { month, year },
-  getStatus = false
+  getStatus = true
 ) {
   let validationResult = {
     isValid: true,
@@ -135,7 +135,7 @@ export function validateCardExpDate(
   return { isValid: true }
 }
 
-export function validateCardCvc(value, getStatus = false) {
+export function validateCardCvc(value, getStatus = true) {
   if (!value.length) {
     return {
       isValid: false,
@@ -160,6 +160,6 @@ export function validateCardCvc(value, getStatus = false) {
 export default {
   validateCardholderName,
   validateCardNumber,
-  validateCardExpDate: validateCardExpDate,
-  validateCardCvc: validateCardCvc,
+  validateCardExpDate,
+  validateCardCvc,
 }
