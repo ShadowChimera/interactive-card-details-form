@@ -3,45 +3,38 @@ import validation from './utils/validation'
 function formReducer(state, action) {
   switch (action.type) {
     case 'submitted_form': {
-      if (
-        state.status === 'validating' ||
-        state.status === 'sending'
-      ) {
+      if (state.status !== 'default') {
         return
       }
 
-      return validate(state) // TODO status change
+      return submitForm(state)
     }
     case 'changed_card_number': {
-      return changeStateData(
-        action.value,
-        state,
-        'cardNumber'
-      )
+      return changeData(action.value, state, 'cardNumber')
     }
     case 'changed_cardholder_name': {
-      return changeStateData(
+      return changeData(
         action.value,
         state,
         'cardholderName'
       )
     }
     case 'changed_exp_date_month': {
-      return changeStateDataCardExpDate(
+      return changeDataCardExpDate(
         action.value,
         state,
         'month'
       )
     }
     case 'changed_exp_date_year': {
-      return changeStateDataCardExpDate(
+      return changeDataCardExpDate(
         action.value,
         state,
         'year'
       )
     }
     case 'changed_cvc': {
-      return changeStateNumericData(
+      return changeNumericData(
         action.value,
         state,
         'cardCvc',
@@ -50,19 +43,34 @@ function formReducer(state, action) {
     }
 
     case 'removed_focus_from_card_number': {
-      return validate(state, 'cardNumber')
+      return {
+        ...state,
+        data: validate('cardNumber', state.data),
+      }
     }
     case 'removed_focus_from_cardholder_name': {
-      return validate(state, 'cardholderName')
+      return {
+        ...state,
+        data: validate('cardholderName', state.data),
+      }
     }
     case 'removed_focus_from_exp_date_month': {
-      return validate(state, 'cardExpDate')
+      return {
+        ...state,
+        data: validate('cardExpDate', state.data),
+      }
     }
     case 'removed_focus_from_exp_date_year': {
-      return validate(state, 'cardExpDate')
+      return {
+        ...state,
+        data: validate('cardExpDate', state.data),
+      }
     }
     case 'removed_focus_from_cvc': {
-      return validate(state, 'cardCvc')
+      return {
+        ...state,
+        data: validate('cardCvc', state.data),
+      }
     }
     default: {
       throw Error('Unknown action: ' + action.type)
@@ -72,7 +80,15 @@ function formReducer(state, action) {
 
 export default formReducer
 
-function changeStateData(value, state, field) {
+/* -------------------------------------------------------------------------- */
+/*                             CHANGING FORM DATA                             */
+/* -------------------------------------------------------------------------- */
+
+function changeData(value, state, field) {
+  if (state.status !== 'default') {
+    return state
+  }
+
   if (value === state.data[field]) {
     return state
   }
@@ -89,7 +105,7 @@ function changeStateData(value, state, field) {
   }
 }
 
-function changeStateNumericData(
+function changeNumericData(
   value,
   state,
   field,
@@ -99,11 +115,11 @@ function changeStateNumericData(
     return state
   }
 
-  return changeStateData(value, state, field)
+  return changeData(value, state, field)
 }
 
-function changeStateDataCardExpDate(value, state, field) {
-  let newState = changeStateNumericData(
+function changeDataCardExpDate(value, state, field) {
+  let newState = changeNumericData(
     value,
     state,
     'cardExpDate',
@@ -122,78 +138,90 @@ function changeStateDataCardExpDate(value, state, field) {
   return newState
 }
 
-function validate(state, fieldToValidate) {
-  const validationMethods = new Map(
-    Object.entries({
-      cardholderName: validation.validateCardholderName,
-      cardNumber: validation.validateCardNumber,
-      cardExpDate: validation.validateCardExpDate,
-      cardCvc: validation.validateCardCvc,
-    })
-  )
+/* -------------------------------------------------------------------------- */
+/*                               FORM SUBMITTING                              */
+/* -------------------------------------------------------------------------- */
 
-  let validationResults
+function submitForm(state) {
+  const formData = state.data
 
-  if (fieldToValidate) {
-    validationResults = new Map([
-      [
-        fieldToValidate,
-        validationMethods.get(fieldToValidate)(
-          state.data[fieldToValidate].value,
-          true
-        ),
-      ],
-    ])
+  let updatedFormData = formData
+  let isFormValid = true
 
-    if (
-      validationResults.get(fieldToValidate).status ===
-        state.data[fieldToValidate].validation?.status &&
-      validationResults.get(fieldToValidate).message ===
-        state.data[fieldToValidate].validation?.message
-    ) {
-      return state
-    }
-  } else {
-    validationResults = new Map(
-      Array.from(validationMethods, (entry) => entry).map(
-        ([fieldName, method]) => {
-          return [
-            fieldName,
-            method(state.data[fieldName].value, true),
-          ]
-        }
-      )
+  for (let fieldName in formData) {
+    let isValid
+    ;[updatedFormData, isValid] = validate(
+      fieldName,
+      updatedFormData,
+      true
     )
+
+    isFormValid = isValid && isFormValid
   }
 
-  let newState = {
-    ...state,
-    data: {
-      ...state.data,
-    },
-  }
-
-  for (let [
-    fieldName,
-    validationResult,
-  ] of validationResults) {
-    if (validationResult.isValid) {
-      newState.data[fieldName] = {
-        ...newState.data[fieldName],
-        validation: null,
-      }
-
-      continue
+  if (isFormValid) {
+    return {
+      ...state,
+      status: 'sending',
+      data: updatedFormData,
     }
+  }
 
-    newState.data[fieldName] = {
-      ...newState.data[fieldName],
-      validation: {
-        status: validationResult.status,
-        message: validationResult.message,
+  if (updatedFormData === formData) {
+    return state
+  }
+
+  return {
+    ...state,
+    data: updatedFormData,
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               FORM VALIDATION                              */
+/* -------------------------------------------------------------------------- */
+
+const validationMethods = {
+  cardholderName: validation.validateCardholderName,
+  cardNumber: validation.validateCardNumber,
+  cardExpDate: validation.validateCardExpDate,
+  cardCvc: validation.validateCardCvc,
+}
+
+function validate(fieldName, formData, getIsValid = false) {
+  const field = formData[fieldName]
+  let updatedFormData = formData
+
+  const { isValid, status, message } = validationMethods[
+    fieldName
+  ](field.value)
+
+  let validation
+
+  if (status || message) {
+    validation = {
+      status: status,
+      message: message,
+    }
+  }
+
+  const isResultDifferent =
+    status !== field.validation?.status ||
+    message !== field.validation?.message
+
+  if (isResultDifferent) {
+    updatedFormData = {
+      ...updatedFormData,
+      [fieldName]: {
+        ...field,
+        validation,
       },
     }
   }
 
-  return newState
+  if (getIsValid) {
+    return [updatedFormData, isValid]
+  }
+
+  return updatedFormData
 }
